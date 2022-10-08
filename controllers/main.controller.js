@@ -35,8 +35,38 @@ const updateUser = async (req, res) => {
 };
 
 
+const loginUser = async (req, res) => {
+    const { username, password } = req.body;
+    await User.findOne({username: username}).exec(function(error, user) {
+        if (error) {
+            callback({error: true})
+        } else if (!user) {
+            callback({error: true})
+        } else {
+            user.comparePassword(password, function(matchError, isMatch) {
+                if (matchError) {
+                    callback({error: true})
+                } else if (!isMatch) {
+                    callback({error: true})
+                } else {
+                    callback({success: true})
+                }
+            })
+        }
+    })
+}
+
+const loginRoute = async (req, res) => {
+    return res.status(200).json({
+        message: "You can login here!",
+      });
+}
+
+
 module.exports = {
   hello,
   createUser,
   updateUser,
+  loginUser,
+  loginRoute
 };

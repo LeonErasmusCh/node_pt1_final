@@ -6,10 +6,12 @@ const UserSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
+      unique: true
     },
     email: {
       type: String,
       required: true,
+      unique: true
     },
     password: {
       type: String,
@@ -52,5 +54,15 @@ UserSchema.pre("save", function (next) {
     return next();
   }
 });
+
+UserSchema.methods.comparePassword = function(password, callback) {
+    bcrypt.compare(password, this.password, function(error, isMatch) {
+        if (error) {
+            return callback(error)
+        } else {
+            callback(null, isMatch)
+        }
+    })
+}
 
 module.exports = mongoose.model("User", UserSchema);
