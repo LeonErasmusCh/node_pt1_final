@@ -22,15 +22,15 @@ const createUser = async (req, res) => {
     })
 }
 
-const userUpdate = async (req, res) => {
+const updateUser = async (req, res) => {
     const { id } = req.params;
     const { username, email, isActive, contacts } = req.body;
     await User.findByIdAndUpdate(id, { username, email, isActive, contacts })
   
   return res.status(200).json({
     status: "Success",
-    message: "Hello World!",
-    data: null
+    message: "User updated",
+    data: {username, email, isActive, contacts}
   });
 };
 
@@ -38,5 +38,5 @@ const userUpdate = async (req, res) => {
 module.exports = {
   hello,
   createUser,
-  userUpdate,
+  updateUser,
 };
