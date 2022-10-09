@@ -1,3 +1,4 @@
+const { exists } = require("../models/user");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 
@@ -43,14 +44,16 @@ const updateUser = async (req, res) => {
 const addContact = async (req, res) => {
   const { id } = req.params;
   const { contact_id } = req.body;
+  
+  const newContact = await User.findById(id);
+  newContact.contacts.push(contact_id)
 
-  const newContact = await User.findByIdAndUpdate(id, { contacts: [contact_id] });
-  const updatedContact = await newContact.save();
+  await newContact.save();
 
   return res.status(200).json({
     status: "Success",
     message: "Contact added successfully",
-    data: null,
+    data: contact_id,
   });
 };
 
