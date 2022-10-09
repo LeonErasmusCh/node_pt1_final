@@ -63,6 +63,8 @@ const loginUser = async (req, res) => {
     if (user) {
         const validPassword = await bcrypt.compare(body.password, user.password);
         if (validPassword) {
+            user.isActive == true;
+            await user.save();
             return res.status(200).json({
                 status: "Success!",
                 message:"Succesfully logged in",
@@ -82,18 +84,29 @@ const loginUser = async (req, res) => {
     }
 }
 
-const loginRoute = async (req, res) => {
-    return res.status(200).json({
-        message: "You can login here!",
-      });
+const logoutUser = async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findById(id)
+    if (user) {
+        user.isActive == false;
+        await user.save()
+        return res.status(200).json({
+            status: "Success",
+            message: "Succesfully logged out"
+        })
+    } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "User not found"
+        })
+    }
 }
-
 
 module.exports = {
   hello,
   createUser,
   updateUser,
   loginUser,
-  loginRoute,
+  logoutUser,
   addContact
 };
