@@ -1,5 +1,6 @@
 const { exists } = require("../models/user");
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
 
 const hello = async (req, res) => {
   return res.status(200).json({
@@ -8,17 +9,24 @@ const hello = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { username, email, password } = req.body;
+    const body = req.body;
 
-  const newUser = await User.create({ username, email, password });
+    if(!(body.email && body.password && body.username)) {
+        return res.status(400).json({
+            status: "Error",
+            message: "All fields are required!"
+        })
+    }
+    const user = new User(body);
 
-  const user = await newUser.save();
+    const salt =await bcrypt.geSalt(10)
 
-  return res.status(201).json({
-    status: "Success!",
-    message: "User created",
-    data: user,
-  });
+    user.password = await bcrypt.hash(user.password, salt);
+    user.save().then((doc) => res.status(201).json({
+        status: "Success!",
+        message: "User created",
+        data: user
+    }))
 };
 
 const updateUser = async (req, res) => {
@@ -49,9 +57,43 @@ const addContact = async (req, res) => {
   });
 };
 
+const loginUser = async (req, res) => {
+    const body = req.body;
+    const user = await User.findOne({ email: body.email });
+    if (user) {
+        const validPassword = await bcrypt.compare(body.password, user.password);
+        if (validPassword) {
+            return res.status(200).json({
+                status: "Success!",
+                message:"Succesfully logged in",
+                data: user
+            })
+        } else {
+            return res.status(400).json({
+                status: "Error",
+                message: "Wrong password"
+            })
+        }
+    } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "User not found"
+        })
+    }
+}
+
+const loginRoute = async (req, res) => {
+    return res.status(200).json({
+        message: "You can login here!",
+      });
+}
+
+
 module.exports = {
   hello,
   createUser,
   updateUser,
-  addContact,
+  loginUser,
+  loginRoute,
+  addContact
 };
