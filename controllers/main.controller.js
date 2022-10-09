@@ -19,7 +19,7 @@ const createUser = async (req, res) => {
     }
     const user = new User(body);
 
-    const salt =await bcrypt.geSalt(10)
+    const salt =await bcrypt.genSalt(10)
 
     user.password = await bcrypt.hash(user.password, salt);
     user.save().then((doc) => res.status(201).json({
@@ -102,11 +102,28 @@ const logoutUser = async (req, res) => {
     }
 }
 
+const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    const user_deleted = await User.deleteOne({_id: id }) 
+    if (user_deleted) {
+        return res.status(200).json({
+            status: "Success",
+            message: "User has been deleted"
+        })
+    } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "User not found"
+        })
+    }
+}
+
 module.exports = {
   hello,
   createUser,
   updateUser,
   loginUser,
   logoutUser,
-  addContact
+  addContact,
+  deleteUser
 };
