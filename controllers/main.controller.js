@@ -135,6 +135,23 @@ const getUser = async (req, res) => {
     }
 }
 
+const getUserContacts = async (req, res) => {
+    const { id } = req.params;
+    const user = await User.findById(id)
+    if (user) {
+        return res.status(200).json({
+            status: "Succes",
+            message: "User found",
+            data: user.contacts
+        })
+    } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "User not found"
+        })
+    }
+}
+
 module.exports = {
   hello,
   createUser,
@@ -143,5 +160,6 @@ module.exports = {
   logoutUser,
   addContact,
   deleteUser,
-  getUser
+  getUser,
+  getUserContacts
 };
