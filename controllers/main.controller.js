@@ -118,6 +118,23 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const getUser = async (req, res) => {
+    const { id } = req.params;
+    const user_info = await User.findById(id)
+    if (user_info) {
+        return res.status(200).json({
+            status: "Success",
+            message: "User found",
+            data: user_info
+        })
+    } else {
+        return res.status(404).json({
+            status: "Success",
+            message: "User not found"
+        })
+    }
+}
+
 module.exports = {
   hello,
   createUser,
@@ -125,5 +142,6 @@ module.exports = {
   loginUser,
   logoutUser,
   addContact,
-  deleteUser
+  deleteUser,
+  getUser
 };
