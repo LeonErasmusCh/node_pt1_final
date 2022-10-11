@@ -47,11 +47,21 @@ const addContact = async (req, res) => {
   const { id } = req.params;
   const { contact_id } = req.body;
   
-  const newContact = await User.findById(id);
-  if (newContact) {
-    newContact.contacts.push(contact_id)
+  const user = await User.findById(id);
+  if (user) {
+    user.contacts.push(contact_id)
+    const contact = await User.findById(contact_id)
+    if (contact) {
+        contact.contacts.push(user._id)
+        contact.save()
+    } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "Contact not found"
+        })     
+    }
 
-    await newContact.save();
+    await user.save();
   
     return res.status(200).json({
       status: "Success",
@@ -190,15 +200,15 @@ const getContactInfo = async (req, res) => {
 
 const startChat = async (req, res) => {
     const { id_1, id_2, message_content } = req.body
-    console.log(req.body.message_content)
     const user_1 = await User.findById(id_1)
     if (user_1) {
         const user_2 = await User.findById(id_2)
         if (user_2) {
             const message = new Message({ user: user_1, content: message_content })
-            message.save()
             const newChat = new Chat({ users: [user_1, user_2], messages: [message] })
             newChat.save()
+            message.chat = newChat
+            message.save()
             
             return res.status(201).json({
                 status: "Success",
@@ -219,6 +229,62 @@ const startChat = async (req, res) => {
     }
 }
 
+const addMessage = async (req, res) => {
+    const { id_1, id_2, message_content } = req.body
+    const user_1 = await User.findById(id_1)
+    const user_2 = await User.findById(id_2)
+    let chat = await Chat.findOne(users = {"users": [user_2, user_1] })
+    if (!chat) {
+        chat = await Chat.findOne(users = {"users": [user_1, user_2] })
+    }
+    if (user_1 && user_2) {
+        console.log(chat)
+        if (chat) {
+            const message = new Message({ user: user_1, content: message_content })
+            message.save()
+            chat.messages.push(message)
+            chat.save()
+            return res.status(201).json({
+                status: "Success",
+                message: "Message sent",
+                data: chat, message
+            })
+        } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "Chat not found"
+        })
+        }
+    } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "Users not found"
+        })
+    }
+}
+
+const getUserContactChat = async (req, res) => {
+    const { id_1, id_2 } = req.body
+    const user_1 = await User.findById(id_1)
+    const user_2 = await User.findById(id_2)
+    if (user_1 && user_2) {
+        const chat = await Chat.findOne(users = {"users": [user_1, user_2]})
+        if (chat) {
+            return res.status(200).json({
+                status: "Success",
+                message: "Chats found",
+                data: {"messages": chat.messages}
+            })
+        } else {
+            return res.status(404).json({
+                status:"Error",
+                message: "Chats not found"
+            })
+        }
+    }
+}
+
+
 module.exports = {
   hello,
   createUser,
@@ -230,5 +296,7 @@ module.exports = {
   getUser,
   getUserContacts,
   getContactInfo,
-  startChat
+  startChat,
+  addMessage,
+  getUserContactChat
 };
