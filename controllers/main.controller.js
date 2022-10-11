@@ -1,6 +1,8 @@
 const { exists } = require("../models/user");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const Message = require("../models/message");
+const Chat = require("../models/chat");
 
 const hello = async (req, res) => {
   return res.status(200).json({
@@ -46,15 +48,22 @@ const addContact = async (req, res) => {
   const { contact_id } = req.body;
   
   const newContact = await User.findById(id);
-  newContact.contacts.push(contact_id)
+  if (newContact) {
+    newContact.contacts.push(contact_id)
 
-  await newContact.save();
-
-  return res.status(200).json({
-    status: "Success",
-    message: "Contact added successfully",
-    data: contact_id,
-  });
+    await newContact.save();
+  
+    return res.status(200).json({
+      status: "Success",
+      message: "Contact added successfully",
+      data: contact_id,
+    });
+  } else {
+    return res.status(404).json({
+        status: "Error",
+        message: "User not found"
+    })
+  }
 };
 
 const loginUser = async (req, res) => {
@@ -179,6 +188,37 @@ const getContactInfo = async (req, res) => {
 
 }
 
+const startChat = async (req, res) => {
+    const { id_1, id_2, message_content } = req.body
+    console.log(req.body.message_content)
+    const user_1 = await User.findById(id_1)
+    if (user_1) {
+        const user_2 = await User.findById(id_2)
+        if (user_2) {
+            const message = new Message({ user: user_1, content: message_content })
+            message.save()
+            const newChat = new Chat({ users: [user_1, user_2], messages: [message] })
+            newChat.save()
+            
+            return res.status(201).json({
+                status: "Success",
+                message: "New chat created",
+                data: newChat
+            })
+        } else {
+            return res.status(404).json({
+                status: "Error",
+                message: "Recipient not found"
+            })
+        }
+    } else {
+        return res.status(404).json({
+            status: "Error",
+            message: "Sender not found"
+        })
+    }
+}
+
 module.exports = {
   hello,
   createUser,
@@ -189,5 +229,6 @@ module.exports = {
   deleteUser,
   getUser,
   getUserContacts,
-  getContactInfo
+  getContactInfo,
+  startChat
 };

@@ -5,11 +5,13 @@ const Message = require("./message");
 const ChatSchema = new mongoose.Schema(
   {
     users: {
-      type: [User],
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
       required: true,
     },
     messages: {
-      type: [Message],
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Message",
       required: true,
     },
   },
