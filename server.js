@@ -1,4 +1,6 @@
 require('dotenv').config();
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./data/swagger.json');
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -12,6 +14,9 @@ const MONGO_URI = process.env.MONGO_URI
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+
+routes.use('/docs', swaggerUi.serve);
+routes.get('/docs', swaggerUi.setup(swaggerDocument));
 
 mongoose.connect(`${MONGO_URI}`, { useNewUrlParser: true })
 const db = mongoose.connection;

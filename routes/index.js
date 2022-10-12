@@ -1,6 +1,8 @@
 const { hello, updateUser, createUser, addContact, loginUser, logoutUser, deleteUser, getUser, getUserContacts, getContactInfo, startChat, addMessage, getUserContactChat } = require('../controllers/main.controller')
 const router = require('express').Router();
 
+// SWAGGER Docs http://localhost:8080/api/docs/
+
 // Route can be tested at: http://localhost:8080/api/
 router.get('/', hello)
 // POST http://localhost:8080/api/user/create  req.body  {"username": string ,"email": string,"password": string}

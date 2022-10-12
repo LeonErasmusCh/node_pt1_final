@@ -1,0 +1,154 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Node.js & Sockets.io Chat REST Api",
+        "description": "Rest Api Documentation",
+        "contact": {
+            "name": "Api Support",
+            "url": "",
+            "email": ""
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Local Server"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "An id of a User",
+                        "example": 1
+                    },
+                    "username": {
+                        "type": "String",
+                        "description": "A name of a User",
+                        "example": "Jonh Doe"
+                    },
+                    "email": {
+                        "type": "String",
+                        "description": "Email",
+                        "example": "johndoe@gmail.com"
+                    },
+                    "password": {
+                        "type": "String",
+                        "description": "Password",
+                        "example": "12345678"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "User",
+            "description": "Users"
+        },
+        {
+            "name": "Chat",
+            "description": "Users"
+        },
+        {
+            "name": "Message",
+            "description": "Users"
+        }
+        
+    ],
+    "paths": {
+        "/api/user/create": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Create User",
+                "operationId": "",
+                "parameters": [{
+                    "name": "username",
+                    "in": "request body",
+                    "description": "username to be passed in request body",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "items": {
+                        "type": "string",
+                        "format": "string"
+                      }
+                    },
+                    "style": "simple"
+                  },
+                  {
+                    "name": "password",
+                    "in": "request body",
+                    "description": "password to be passed in request body",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "items": {
+                        "type": "string",
+                        "format": "string"
+                      }
+                    },
+                    "style": "simple"
+                  },
+                  {
+                    "name": "email",
+                    "in": "request body",
+                    "description": "email to be passed in request body",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "items": {
+                        "type": "string",
+                        "format": "string"
+                      }
+                    },
+                    "style": "simple"
+                  }],
+                "responses": {
+                    "200": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Contact"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "User Login",
+                "operationId": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "List of contacts successfully",
+                        "content": {
+                            "application/json": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Contact"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
