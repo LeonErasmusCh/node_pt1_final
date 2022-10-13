@@ -1,6 +1,7 @@
 require('dotenv').config();
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./data/swagger.json');
+const cors = require('cors')
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -14,6 +15,10 @@ const MONGO_URI = process.env.MONGO_URI
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({ 
+    origin: '*'
+}))
+
 
 routes.use('/docs', swaggerUi.serve);
 routes.get('/docs', swaggerUi.setup(swaggerDocument));
@@ -21,6 +26,8 @@ routes.get('/docs', swaggerUi.setup(swaggerDocument));
 mongoose.connect(`${MONGO_URI}`, { useNewUrlParser: true })
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Error when trying to connect to the database"))
+
+
 
 app.use('/api', routes);
 
