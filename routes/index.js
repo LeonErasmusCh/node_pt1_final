@@ -10,7 +10,7 @@ router.post('/user/create', createUser)
 // POST http://localhost:8080/api/user/login  req.body  {"email": string,"password": string}
 router.post('/user/login', loginUser)
 // POST http://localhost:8080/api/user/logout/{id}
-router.get('/user/logout/:id', logoutUser)
+router.post('/user/logout/:id', logoutUser)
 // GET http://localhost:8080/api/user/delete/{id}
 router.get('/user/delete/:id', deleteUser)
 // GET http://localhost:8080/api/user/{id}
