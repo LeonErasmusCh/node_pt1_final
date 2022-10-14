@@ -1,4 +1,4 @@
-const { hello, updateUser, createUser, addContact, loginUser, logoutUser, deleteUser, getUser, getUserContacts, getContactInfo, startChat, addMessage, getUserContactChat } = require('../controllers/main.controller')
+const { hello, updateUser, createUser, addContact, loginUser, logoutUser, deleteUser, getUser, getUserContacts, getContactInfo, startChat, addMessage, getUserContactChat, getMessage } = require('../controllers/main.controller')
 const router = require('express').Router();
 
 // SWAGGER Docs http://localhost:8080/api/docs/
@@ -29,5 +29,7 @@ router.post('/chat/new-chat', startChat)
 router.put('/chat/add-message', addMessage)
 // GET http://localhost:8080/api/chat/get-chat-history  req.body {"id_1": string, "id_2": string}
 router.get('/chat/get-chat-history', getUserContactChat)
+// GET http://localhost:8080/api/chat/message/{id}
+router.get('/chat/message/:id', getMessage)
 
 module.exports = router;
